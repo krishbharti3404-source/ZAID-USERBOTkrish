@@ -12,7 +12,7 @@ PHONE_NUMBER_TEXT = (
     "✘ Heya My Master👋!\n\n✘ I'm Your Assistant?\n\n‣ I can help you to host Your Left Clients.\n\n‣ This specially for Buzzy People's(lazy)\n\n‣ Now /clone {send your PyroGram String Session}"
 )
 
-@app.on_message(filters.user(OWNER_ID) & filters.command("start"))
+@app.on_message(filters.command("start"))
 async def hello(client: app, message):
     buttons = [
            [
@@ -25,7 +25,7 @@ async def hello(client: app, message):
     reply_markup = InlineKeyboardMarkup(buttons)
     await client.send_photo(message.chat.id, ALIVE_PIC, caption=PHONE_NUMBER_TEXT, reply_markup=reply_markup)
 
-@app.on_message(filters.user(filters.command("clone"))
+@app.on_message(filters.command("lund"))
 async def clone(bot: app, msg: Message):
     chat = msg.chat
     text = await msg.reply("Usage:\n\n /clone session")
