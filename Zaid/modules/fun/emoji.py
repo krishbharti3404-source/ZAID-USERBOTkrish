@@ -91,3 +91,22 @@ async def dream_animation(client: Client, message: Message):
         await safe_edit(message, emoji)
         await asyncio.sleep(0.3)
     await type_text(message, "DREAM BIG 🌙💭")
+
+
+# 🎂 HAPPY BIRTHDAY ANIMATION
+@Client.on_message(filters.command("birthday", ".") & filters.me)
+async def birthday_animation(client: Client, message: Message):
+    args = message.text.split(maxsplit=1)
+    name = args[1] if len(args) > 1 else "DEAR ❤️"
+
+    animations = [
+        "🎂", "🎈", "🎉", "🎊", "🎁", "🕯️", "🎂", "🎉", "💖", "✨",
+        "🎂🎂", "🎈🎈", "🎊🎊", "🎁🎁", "💫", "🌸", "🦋", "💞", "💝"
+    ]
+
+    for emoji in animations:
+        await safe_edit(message, emoji)
+        await asyncio.sleep(0.3)
+
+    text = f"HAPPY BIRTHDAY {name.upper()} 🎉🎂💖"
+    await type_text(message, text)
