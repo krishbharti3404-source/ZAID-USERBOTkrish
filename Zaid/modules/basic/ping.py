@@ -1,4 +1,5 @@
 import time
+import asyncio
 from datetime import datetime
 import speedtest
 from pyrogram import Client, filters
@@ -63,6 +64,7 @@ async def pingme(client: Client, message: Message):
     uptime = await get_readable_time((time.time() - StartTime))
     start = datetime.now()
     xx = await message.reply_text("**0% ▒▒▒▒▒▒▒▒▒▒**")
+
     try:
         await message.delete()
     except:
@@ -76,14 +78,13 @@ async def pingme(client: Client, message: Message):
     end = datetime.now()
     duration = (end - start).microseconds / 1000
 
-    # Owner info (you can replace this username)
-    OWNER_USERNAME = "@YourUsernameHere"  # Change to your actual username
+    OWNER_USERNAME = "@Nonsexcy"  # 🔥 Replace with your actual username if needed
 
     await xx.edit(
         f"❏ **𝗣𝗢𝗡𝗚™**\n"
         f"├• **ᴘɪɴɢ:** `{duration} ms`\n"
         f"├• **ᴜᴘᴛɪᴍᴇ:** `{uptime}`\n"
-        f"├• **ᴏᴡɴᴇʀ:** {@Nonsexcy}\n"
+        f"├• **ᴏᴡɴᴇʀ:** {OWNER_USERNAME}\n"
         f"└• **ᴜꜱᴇʀ:** {client.me.mention}"
     )
 
@@ -91,7 +92,7 @@ async def pingme(client: Client, message: Message):
 add_command_help(
     "ping",
     [
-        ["ping", "Check bot alive or not, shows ping & uptime with owner info."],
-        ["speedtest", "Run a speed test and get detailed results."],
+        ["ping", "Check if bot is alive — shows ping, uptime & owner info."],
+        ["speedtest", "Run an internet speed test and show full results."],
     ],
 )
