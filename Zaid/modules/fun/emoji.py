@@ -1,83 +1,153 @@
-import asyncio
-from collections import deque
-from random import randint
-from pyrogram import filters, Client
-from pyrogram.types import Message
-from Zaid.modules.help import add_command_help
-
-# 🌈 Emoji animation sets
-emojis = {
-    "moon": list("🌗🌘🌑🌒🌓🌔🌕🌖"),
-    "clock": list("🕙🕘🕗🕖🕕🕔🕓🕒🕑🕐🕛"),
-    "thunder": list("☀️🌤️⛅🌥️☁️🌩️🌧️⛈️⚡🌩️🌧️🌦️🌥️⛅🌤️☀️"),
-    "earth": list("🌏🌍🌎🌎🌍🌏🌍🌎"),
-    "heart": list("❤️🧡💛💚💙💜🖤🤍🤎"),
-    
-    # 💕 New aesthetic hearts
-    "love": list("💞💓💗💖💘💝💟"),
-    "sparkheart": list("❤️‍🔥💖❤️‍🔥💞💓💗"),
-    "brokenheart": list("💔❤️‍🩹❤️💔❤️‍🩹❤️"),
-    "beatingheart": list("💓💗💖💓💗💖💓💗💖"),
-    "rainbowheart": list("❤️🧡💛💚💙💜🤎🖤🤍"),
-    
-    # 🌸 Extra visual cycles
-    "flower": list("🌸🌺🌹🌷💐🌻🌼🌸"),
-    "star": list("⭐🌟✨💫🌠"),
-    "fire": list("🔥💥⚡💫🔥"),
-    "sparkle": list("✨💫🌟💖🌠✨"),
-}
-
-emoji_commands = [x for x in emojis]
-
-
-@Client.on_message(filters.command(emoji_commands, ".") & filters.me)
-async def emoji_cycle(bot: Client, message: Message):
-    deq = deque(emojis[message.command[0]])
+# 💞 Romantic Animated Emoji Commands
+@Client.on_message(filters.command("love", ".") & filters.me)
+async def love_animation(bot: Client, message: Message):
+    texts = [
+        "I 💖",
+        "I 💖 Y",
+        "I 💖 YO",
+        "I 💖 YOU",
+        "I 💖 YOU 💫",
+        "I 💖 YOU 💞",
+        "I 💖 YOU 💖",
+        "I 💖 YOU FOREVER 💞",
+    ]
     try:
-        for _ in range(randint(16, 32)):
+        for t in texts:
+            await message.edit(t)
+            await asyncio.sleep(0.4)
+        for _ in range(6):
+            await message.edit("💞💓💗💖💘💝💞💓💗💖💘💝")
             await asyncio.sleep(0.3)
-            await message.edit("".join(deq), parse_mode=None)
-            deq.rotate(1)
     except Exception:
         await message.delete()
 
 
-# 🎯 Special emoji senders
-special_emojis_dict = {
-    "target": {"emoji": "🎯", "help": "The special target emoji"},
-    "dice": {"emoji": "🎲", "help": "The special dice emoji"},
-    "bb": {"emoji": "🏀", "help": "The special basketball emoji"},
-    "soccer": {"emoji": "⚽️", "help": "The special football emoji"},
-}
-special_emoji_commands = [x for x in special_emojis_dict]
+@Client.on_message(filters.command("sparkheart", ".") & filters.me)
+async def sparkheart(bot: Client, message: Message):
+    seq = [
+        "❤️‍🔥",
+        "💖",
+        "💞",
+        "💓",
+        "💘 Burning Love ❤️‍🔥",
+        "💖❤️‍🔥💞💘",
+        "🔥 LOVE ON FIRE 🔥",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.4)
+    except Exception:
+        await message.delete()
 
 
-@Client.on_message(filters.command(special_emoji_commands, ".") & filters.me)
-async def special_emojis(bot: Client, message: Message):
-    emoji = special_emojis_dict[message.command[0]]
-    await message.delete()
-    await bot.send_dice(message.chat.id, emoji["emoji"])
+@Client.on_message(filters.command("brokenheart", ".") & filters.me)
+async def brokenheart(bot: Client, message: Message):
+    seq = [
+        "💔",
+        "💔💔",
+        "💔 Broken 💔",
+        "💔 Heart 💔",
+        "❤️‍🩹 Healing ❤️‍🩹",
+        "❤️‍🩹❤️‍🩹❤️‍🩹",
+        "❤️ Healed ❤️",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.6)
+    except Exception:
+        await message.delete()
 
 
-# 💡 Command help
-special_emoji_help = [
-    [".moon", "Cycles all the phases of the moon emojis."],
-    [".clock", "Cycles all the phases of the clock emojis."],
-    [".thunder", "Cycles thunder animations."],
-    [".heart", "Cycles through heart emojis."],
-    [".earth `or` .globe", "Make the world go round."],
-    [".love", "Cycles romantic heart styles."],
-    [".sparkheart", "Flaming or sparkling hearts."],
-    [".brokenheart", "Animated heartbreak & healing."],
-    [".beatingheart", "Beating heart animation."],
-    [".rainbowheart", "Rainbow-themed hearts."],
-    [".flower", "Cycle through beautiful flowers."],
-    [".star", "Twinkling star animation."],
-    [".fire", "Flame & energy cycle."],
-    [".sparkle", "Shiny sparkle effect."],
-]
+@Client.on_message(filters.command("beatingheart", ".") & filters.me)
+async def beatingheart(bot: Client, message: Message):
+    seq = [
+        "💓",
+        "💗",
+        "💖",
+        "💞",
+        "💓 Beating...",
+        "💗💖💗💖",
+        "💓💓💓💓💓",
+        "💖💖💖💖💖",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.3)
+    except Exception:
+        await message.delete()
 
-for x in special_emojis_dict:
-    special_emoji_help.append([f".{x}", special_emojis_dict[x]["help"]])
 
-add_command_help("emoji", special_emoji_help)
+@Client.on_message(filters.command("rainbowheart", ".") & filters.me)
+async def rainbowheart(bot: Client, message: Message):
+    seq = [
+        "❤️🧡💛💚💙💜",
+        "🧡💛💚💙💜❤️",
+        "💛💚💙💜❤️🧡",
+        "💚💙💜❤️🧡💛",
+        "💙💜❤️🧡💛💚",
+        "💜❤️🧡💛💚💙",
+        "🌈 Love in Colors 🌈",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.4)
+    except Exception:
+        await message.delete()
+
+
+@Client.on_message(filters.command("fireheart", ".") & filters.me)
+async def fireheart(bot: Client, message: Message):
+    seq = [
+        "🔥❤️🔥",
+        "❤️‍🔥🔥❤️‍🔥",
+        "🔥 Burning Heart ❤️‍🔥",
+        "🔥❤️🔥❤️🔥❤️🔥",
+        "❤️‍🔥 I’m on Fire ❤️‍🔥",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.4)
+    except Exception:
+        await message.delete()
+
+
+@Client.on_message(filters.command("kiss", ".") & filters.me)
+async def kiss(bot: Client, message: Message):
+    seq = [
+        "😘",
+        "😚",
+        "😙",
+        "💋",
+        "💋 Muah 💋",
+        "😘💋😘💋😘",
+        "💞 Kiss Sent 💞",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.5)
+    except Exception:
+        await message.delete()
+
+
+@Client.on_message(filters.command("missyou", ".") & filters.me)
+async def missyou(bot: Client, message: Message):
+    seq = [
+        "😔",
+        "🥺",
+        "💭 Thinking of You 💭",
+        "💌 I Miss You 💌",
+        "💞💭💞💭💞",
+        "💔 Come Back Soon 💔",
+    ]
+    try:
+        for s in seq:
+            await message.edit(s)
+            await asyncio.sleep(0.5)
+    except Exception:
+        await message.delete()
