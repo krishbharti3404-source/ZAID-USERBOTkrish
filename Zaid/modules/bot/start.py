@@ -1,95 +1,81 @@
+from pyrogram import Client, filters
+from pyrogram.types import Message, ForceReply
 from Zaid import app, API_ID, API_HASH
-from config import OWNER_ID, ALIVE_PIC
-from pyrogram import filters, Client
-from pyrogram.types import *
-import asyncio
 
-PHONE_NUMBER_TEXT = (
-    "✘ Heya My Master👋!\n\n"
-    "✘ I'm Your Assistant?\n\n"
-    "‣ I can help you to host Your Left Clients.\n\n"
-    "‣ This specially for Buzzy People's (lazy)\n\n"
-    "‣ Use /generate to get Pyrogram String Session\n"
-    "‣ Use /clone {string} to login client"
-)
+sessions = {}
 
-# ======================= START =======================
-
-@app.on_message(filters.command("start"))
-async def hello(client: app, message):
-    buttons = [
-        [InlineKeyboardButton("✘ ᴜᴘᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="t.me/fine_n_ok")],
-        [InlineKeyboardButton("✘ ꜱᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ", url="t.me/kryshupdate")],
-    ]
-
-    await client.send_photo(
-        message.chat.id,
-        ALIVE_PIC,
-        caption=PHONE_NUMBER_TEXT,
-        reply_markup=InlineKeyboardMarkup(buttons),
-    )
-
-# ======================= STRING SESSION GENERATOR =======================
-
-@app.on_message(filters.command("generate"))
+@app.on_message(filters.command("genstring"))
 async def generate_session(_, msg: Message):
+    await msg.reply(
+        "**📱 Send your phone number with country code.**\nExample: `+91XXXXXXXXXX`",
+        reply_markup=ForceReply()
+    )
+    sessions[msg.chat.id] = {"step": 1}
 
-    await msg.reply("📱 **Send Your Phone Number With Country Code**\nExample: `+919876543210`")
 
-    phone = await app.listen(msg.chat.id)
-    phone = phone.text
+@app.on_message(filters.text & filters.private)
+async def steps(_, msg: Message):
+    chat_id = msg.chat.id
 
-    client = Client("gen", api_id=API_ID, api_hash=API_HASH)
+    if chat_id not in sessions:
+        return
 
-    await client.connect()
+    step = sessions[chat_id]["step"]
 
-    try:
-        code = await client.send_code(phone)
-    except Exception as e:
-        return await msg.reply(f"❌ Error: `{e}`")
+    # STEP 1: USER PHONE NUMBER
+    if step == 1:
+        phone = msg.text.strip()
 
-    await msg.reply("📩 **Enter the OTP received:**\nFormat: `12345`")
+        sessions[chat_id]["phone"] = phone
 
-    otp = await app.listen(msg.chat.id)
-    otp = otp.text.replace(" ", "")
+        await msg.reply("📨 **OTP send kiya gaya!**\n\nAb Telegram ka OTP yahan bhejo:",
+                        reply_markup=ForceReply())
 
-    try:
-        await client.sign_in(phone, code.phone_code_hash, otp)
-    except Exception:
-        return await msg.reply("❌ OTP Invalid. Try Again.")
+        sessions[chat_id]["step"] = 2
+        return
 
-    string = await client.export_session_string()
-    await client.disconnect()
+    # STEP 2: GET OTP
+    if step == 2:
+        otp = msg.text.strip()
+        sessions[chat_id]["otp"] = otp
 
-    await msg.reply(f"✅ **Your Pyrogram String Session:**\n\n`{string}`\n\nKeep it safe!")
+        await msg.reply("🔐 **Agar 2-Step Password hai to send karo.**\nAgar nahi hai to `no` likho.",
+                        reply_markup=ForceReply())
 
-# ======================= CLONE =======================
+        sessions[chat_id]["step"] = 3
+        return
 
-@app.on_message(filters.command("clone"))
-async def clone(bot: app, msg: Message):
+    # STEP 3: PASSWORD (optional)
+    if step == 3:
+        password = msg.text.strip()
 
-    try:
-        session_string = msg.command[1]
-    except:
-        return await msg.reply("❌ Provide session string.\nExample: `/clone ABCDEF...`")
+        if password.lower() == "no":
+            password = None
 
-    text = await msg.reply("Booting Your Client...")
+        phone = sessions[chat_id]["phone"]
+        otp = sessions[chat_id]["otp"]
 
-    try:
-        client = Client(
-            name="Melody",
-            api_id=API_ID,
-            api_hash=API_HASH,
-            session_string=session_string,
-            plugins=dict(root="Zaid/modules")
-        )
+        try:
+            temp = Client(
+                name="gen",
+                api_id=API_ID,
+                api_hash=API_HASH,
+                in_memory=True
+            )
 
-        await client.start()
-        user = await client.get_me()
+            await temp.connect()
+            await temp.send_code(phone)
 
-        await text.edit(
-            f"✅ **Client Started Successfully As {user.first_name}**"
-        )
+            sent = await temp.sign_in(phone, otp, password=password)
+            string = await temp.export_session_string()
 
-    except Exception as e:
-        await msg.reply(f"❌ ERROR: `{e}`")
+            await msg.reply(
+                f"🎉 **Your Pyrogram String Session:**\n\n`{string}`\n\n"
+                "**⚠ Save it safely!**"
+            )
+
+        except Exception as e:
+            await msg.reply(f"❌ ERROR:\n`{e}`")
+
+        sessions.pop(chat_id, None)
+        return
